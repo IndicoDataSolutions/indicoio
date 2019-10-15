@@ -24,6 +24,8 @@ class RequestProxy(object):
         self.base_url = f"{config_options['protocol']}://{config_options['host']}"
         self.serializer = config_options["serializer"]
         self.api_token = config.resolve_api_token(path=config_options["token_path"])
+
+        # Check if we're inheriting a session with authentication
         if config_options["request_session"]:
             self.request_session = config_options["request_session"]
         else:

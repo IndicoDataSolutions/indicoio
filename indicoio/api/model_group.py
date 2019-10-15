@@ -1,6 +1,8 @@
 from indicoio.graphql import GraphClient
+from .base import ObjectProxy
 
 
-class ModelGroup(GraphClient):
-    def __init__(self):
-        pass
+class ModelGroup(ObjectProxy):
+    def predict(self, data):
+        self.gql_query()
+
