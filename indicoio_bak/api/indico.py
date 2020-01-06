@@ -2,7 +2,7 @@ from .base import ObjectProxy
 from .model_group import ModelGroup
 
 
-class Indico(ObjectProxy):
+class IndicoClient(ObjectProxy):
     def model_groups(self, *fields):
         """
         Schema Introspection Client method generation should take care of query building

@@ -26,15 +26,40 @@ First, download an API token from your [user dashboard](https://app.indico.io/au
 
 ## API Examples
 ```python3
-import indicoio
-from indicoio import ModelGroup, IndicoApi
+from indicoio import IndicoClient, ModelGroupClient, DatasetClient
 
-# Model Predictions
-mg = ModelGroup(id=<model group id>)
-mg.load()
-mg.predict(["some text"])
+# Get Resource Clients
+dataset_client = indico_client.get_client(DatasetClient)
+model_group_client = indico_client.get_client(ModelGroupClient)
 
-# PDF Extraction
-api_client = IndicoApi()
-api_client.pdf_extraction(["url or file"], **options)
+# Create Resources
+dataset = (
+    dataset_client.new(name="dataset name")
+    .add_files("path_to_file", "path_to_file", "path_to_file")
+    .create()
+)
+
+model_group = model_group_client.new(
+    name="model group name",
+    dataset_id=dataset["id"],
+    source_column_id=dataset.datacolumns[0].id,
+    target_labelset_id=dataset.labelsets[0].id,
+).create()
+
+# Train
+model_group_client.train(model_group)
+model_group_client.wait(model_group)
+
+# Load & Predict
+model_group_client.load(model_group)
+model_group_client.predict(model_group, data=["some", "input", "text"])
+
+# Delete Resources
+model_group_client.delete(model_group)
+dataset_client.delete(dataset)
+
+# PDFExtraction Results
+document = Document("filepath")
+doc_client = indico_client.api_client(DocumentClient)
+jsonstring = doc_client.pdfextraction(document)
 ```

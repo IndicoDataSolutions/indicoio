@@ -10,7 +10,7 @@ from .job_result import JobResult
 from indicoio.errors import IndicoInputError
 
 
-class ModelGroup(ObjectProxy):
+class ModelGroupClient(ObjectProxy):
     def predict(self, data, model_id=None, job_results=False, **predict_kwargs):
         if not isinstance(data, list):
             raise IndicoInputError(
