@@ -59,19 +59,26 @@ class JobResult(ObjectProxy):
 
         return self.get("ready", False) is True
 
-    def result(self):
-        if self.get("result") is not None:
-            return self["result"]
+    def result(self, retry=True):
+        try:
+            if self.get("result") is not None:
+                return self["result"]
 
-        response = self.graphql.query(
-            f"""query {{
-                    job(id: "{self["id"]}") {{
-                        status
-                        result
-                    }}
-            }}"""
-        )
-        job = response["data"]["job"]
-        self.update(job)
-        self["result"] = json.loads(self["result"])
-        return self["result"]
+            response = self.graphql.query(
+                f"""query {{
+                        job(id: "{self["id"]}") {{
+                            status
+                            result
+                        }}
+                }}"""
+            )
+            job = response["data"]["job"]
+            self.update(job)
+            self["result"] = json.loads(self["result"])
+            return self["result"]
+        except Exception:
+            print("Retrying fetch")
+            if retry:
+                return self.result(retry=False)
+            else:
+                raise
