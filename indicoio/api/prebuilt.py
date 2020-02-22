@@ -19,11 +19,17 @@ def enforce_list(inputs):
         )
 
 
-def _convert_files_to_str(files: List[dict]):
+def _convert_files_to_str(uploaded_files: List[dict]):
+    file_inputs = [
+        {"name": f["name"], "path": f["path"], "uploadType": f["type"]}
+        for f in uploaded_files
+    ]
+
     str_files = [
         ",".join(f"{key}: {json.dumps(val)}" for key, val in file.items())
-        for file in files
+        for file in file_inputs
     ]
+
     return "[" + ",".join("{" + str_file + "}" for str_file in str_files) + "]"
 
 
@@ -111,11 +117,6 @@ class IndicoApi(Indico):
             enforce_list(large_document_paths)
 
             uploaded_files = self.storage.upload_files(large_document_paths)
-
-            file_inputs = [
-                {"name": f["name"], "path": f["path"], "uploadType": f["type"]}
-                for f in uploaded_files
-            ]
 
             file_inputs_string = _convert_files_to_str(file_inputs)
 
