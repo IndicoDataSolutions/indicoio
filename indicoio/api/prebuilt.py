@@ -130,8 +130,6 @@ class IndicoApi(Indico):
                 """
             )
 
-            import ipdb; ipdb.set_trace()
-
         # job_id = response["data"]["documentExtraction"]["jobId"]
         # job = self.build_object(JobResult, id=job_id)
         # if job_results:
