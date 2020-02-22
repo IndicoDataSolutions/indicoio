@@ -19,7 +19,7 @@ def enforce_list(inputs):
         )
 
 
-def _convert_files_to_str(uploaded_files: List[dict]):
+def _convert_files_meta_str(uploaded_files: List[dict]):
     file_inputs = [
         {"name": f["name"], "path": f["path"], "uploadType": f["type"]}
         for f in uploaded_files
@@ -118,7 +118,7 @@ class IndicoApi(Indico):
 
             uploaded_files = self.storage.upload_files(large_document_paths)
 
-            file_inputs_string = _convert_files_to_str(uploaded_files)
+            file_inputs_string = _convert_files_meta_str(uploaded_files)
 
             response = self.graphql.query(
                 f"""
