@@ -118,7 +118,7 @@ class IndicoApi(Indico):
 
             uploaded_files = self.storage.upload_files(large_document_paths)
 
-            file_inputs_string = _convert_files_to_str(file_inputs)
+            file_inputs_string = _convert_files_to_str(uploaded_files)
 
             response = self.graphql.query(
                 f"""
