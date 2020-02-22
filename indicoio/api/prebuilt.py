@@ -130,24 +130,10 @@ class IndicoApi(Indico):
                 """
             )
 
-            import ipdb
-
-            ipdb.set_trace()
-
-        # job_id = response["data"]["documentExtraction"]["jobId"]
-        # job = self.build_object(JobResult, id=job_id)
-        # if job_results:
-        #     return job
-        # else:
-        #     job.wait()
-        #     return job.result()
-
-
-# Probably need to change this to rainbow client, catch errors in client?
-# uploaded_files = self.graphql.post(
-#     "/storage/files/upload?upload_type=user",
-#     files={
-#         f"file_{idx}": open(file, "rb")
-#         for idx, file in enumerate(large_document_paths)
-#     },
-# )
+        job_id = response["data"]["documentExtraction"]["jobId"]
+        job = self.build_object(JobResult, id=job_id)
+        if job_results:
+            return job
+        else:
+            job.wait()
+            return job.result()
