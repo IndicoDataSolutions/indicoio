@@ -92,6 +92,7 @@ class IndicoApi(Indico):
         Extracts and returns the contents of a Word Document
 
         :param data: List of inputs for extraction.
+        :param large_document_paths: List of paths to large documents for extraction.
         :param job_results: True to return the id of the prediction job rather than the prediction results directly.
         :document_extraction_options: Options to pass to Document extraction
         """
