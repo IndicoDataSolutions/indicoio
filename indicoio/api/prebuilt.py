@@ -130,10 +130,10 @@ class IndicoApi(Indico):
                 """
             )
 
-        # job_id = response["data"]["documentExtraction"]["jobId"]
-        # job = self.build_object(JobResult, id=job_id)
-        # if job_results:
-        #     return job
-        # else:
-        #     job.wait()
-        #     return job.result()
+        job_id = response["data"]["documentExtraction"]["jobId"]
+        job = self.build_object(JobResult, id=job_id)
+        if job_results:
+            return job
+        else:
+            job.wait()
+            return job.result()
