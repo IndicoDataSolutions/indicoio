@@ -1,7 +1,6 @@
 import requests
 import logging
 
-from typing import List
 from indicoio import config
 from indicoio.errors import IndicoRequestError
 from indicoio.client.serialization import deserialize
