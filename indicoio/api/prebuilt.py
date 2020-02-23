@@ -103,7 +103,7 @@ class IndicoApi(Indico):
         response = self.graphql.query(
             f"""
             mutation {{
-                documentExtraction(data: "xyz", files: {file_inputs}) {{
+                documentExtraction(data: "xyz", files: {file_inputs}, {option_string}) {{
                     jobId
                 }}
             }}
