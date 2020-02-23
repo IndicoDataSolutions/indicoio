@@ -17,11 +17,17 @@ def _convert_files_to_str(uploaded_files: List[dict]):
     file_inputs = [
         {
             "filename": f["name"],
-            "filemeta": {"path": f["path"], "name": f["name"], "uploadType": f["type"]},
+            "filemeta": json.dumps(
+                {"path": f["path"], "name": f["name"], "uploadType": f["type"]}
+            ),
         }
         for f in uploaded_files
     ]
-    return json.dumps(file_inputs)
+    return (
+        json.dumps(file_inputs)
+        .replace('"filename": ', "filename: ")
+        .replace('"filemeta": ', "filemeta: ")
+    )
 
 
 class IndicoApi(Indico):
@@ -74,7 +80,7 @@ class IndicoApi(Indico):
 
     def document_extraction(
         self,
-        data: List[str] = None,
+        data: List[str] = [],
         job_results: bool = False,
         **document_extraction_options,
     ):
@@ -91,8 +97,9 @@ class IndicoApi(Indico):
             data = [data]
 
         # Get paths, assume anything not a path is b64 encoded
-        # Not sure if this should only handle paths or handle both paths and encode
-        # files and do something different for b64 encoded documents.
+        # Not sure if this method should only handle paths or handle both paths and encoded
+        # files, but do something differently for encoded files
+
         data_paths = [d for d in data if Path(d).exists()]
         data_b64s = [d for d in data if d not in data_paths]
 
@@ -103,7 +110,7 @@ class IndicoApi(Indico):
         response = self.graphql.query(
             f"""
             mutation {{
-                documentExtraction(files: {file_inputs}, {option_string}) {{
+                documentExtraction(data: "xyz", files: {file_inputs}) {{
                     jobId
                 }}
             }}

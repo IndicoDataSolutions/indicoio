@@ -3,9 +3,9 @@ from typing import List
 
 
 class StorageClient(RequestProxy):
-    def upload_files(self, large_document_paths: List[str]):
+    def upload_files(self, paths: List[str]):
         files = {
-            file: open(file, "rb")
-            for file in enumerate(large_document_paths)
+            path: open(path, "rb")
+            for path in paths
         }
         return self.post("/api/storage/files/upload?upload_type=user", files=files)
