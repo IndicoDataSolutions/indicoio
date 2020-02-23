@@ -5,6 +5,7 @@ from .job_result import JobResult
 from indicoio.preprocess.pdf import pdf_preprocess
 from indicoio.errors import IndicoInputError
 from indicoio.client.storage import StorageClient
+from pathlib import Path
 from typing import List
 
 
@@ -12,25 +13,15 @@ def _convert_options_to_str(options):
     return ",".join(f"{key}: {json.dumps(option)}" for key, option in options.items())
 
 
-def enforce_list(inputs):
-    if not isinstance(inputs, list):
-        raise IndicoInputError(
-            "This function expects a list input. If you have a single piece of data, please wrap it in a list"
-        )
-
-
-def _convert_files_meta_str(uploaded_files: List[dict]):
+def _convert_files_to_str(uploaded_files: List[dict]):
     file_inputs = [
-        {"name": f["name"], "path": f["path"], "uploadType": f["type"]}
+        {
+            "filename": f["name"],
+            "filemeta": {"path": f["path"], "name": f["name"], "uploadType": f["type"]},
+        }
         for f in uploaded_files
     ]
-
-    str_files = [
-        ",".join(f"{key}: {json.dumps(val)}" for key, val in file.items())
-        for file in file_inputs
-    ]
-
-    return "[" + ",".join("{" + str_file + "}" for str_file in str_files) + "]"
+    return json.dumps(file_inputs)
 
 
 class IndicoApi(Indico):
@@ -85,51 +76,39 @@ class IndicoApi(Indico):
         self,
         data: List[str] = None,
         job_results: bool = False,
-        large_document_paths: List[str] = None,
         **document_extraction_options,
     ):
         """
         Extracts and returns the contents of a Word Document
 
         :param data: List of inputs for extraction.
-        :param large_document_paths: List of paths to large documents for extraction.
         :param job_results: True to return the id of the prediction job rather than the prediction results directly.
         :document_extraction_options: Options to pass to Document extraction
         """
         option_string = _convert_options_to_str(document_extraction_options)
 
-        if data:
-            enforce_list(data)
+        if not isinstance(data, list):
+            data = [data]
 
-            data = [pdf_preprocess(datum) for datum in data]
-            data = json.dumps(data)
+        # Get paths, assume anything not a path is b64 encoded
+        # Not sure if this should only handle paths or handle both paths and encode
+        # files and do something different for b64 encoded documents.
+        data_paths = [d for d in data if Path(d).exists()]
+        data_b64s = [d for d in data if d not in data_paths]
 
-            response = self.graphql.query(
-                f"""
-                mutation {{
-                    documentExtraction(data: {data}, {option_string}) {{
-                        jobId
-                    }}
+        uploaded_files = self.storage.upload_files(data_paths)
+
+        file_inputs = _convert_files_to_str(uploaded_files)
+
+        response = self.graphql.query(
+            f"""
+            mutation {{
+                documentExtraction(files: {file_inputs}, {option_string}) {{
+                    jobId
                 }}
-                """
-            )
-
-        elif large_document_paths:
-            enforce_list(large_document_paths)
-
-            uploaded_files = self.storage.upload_files(large_document_paths)
-
-            file_inputs_string = _convert_files_meta_str(uploaded_files)
-
-            response = self.graphql.query(
-                f"""
-                mutation {{
-                    documentExtraction(files: {file_inputs_string}, {option_string}) {{
-                        jobId
-                    }}
-                }}
-                """
-            )
+            }}
+            """
+        )
 
         job_id = response["data"]["documentExtraction"]["jobId"]
         job = self.build_object(JobResult, id=job_id)
@@ -138,3 +117,11 @@ class IndicoApi(Indico):
         else:
             job.wait()
             return job.result()
+
+
+# mutation {
+#   documentExtraction(files: [{path: "fsdf", name: "sdsf", uploadType: "dfgds"}], data:"dgs")
+#   {
+#     jobId
+#   }
+# }
