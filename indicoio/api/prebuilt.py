@@ -80,7 +80,7 @@ class IndicoApi(Indico):
 
     def document_extraction(
         self,
-        data: List[str] = [],
+        data: Union(List[str], List(bytes)) = [],
         job_results: bool = False,
         **document_extraction_options,
     ):
