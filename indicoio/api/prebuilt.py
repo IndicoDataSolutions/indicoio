@@ -117,11 +117,3 @@ class IndicoApi(Indico):
         else:
             job.wait()
             return job.result()
-
-
-# mutation {
-#   documentExtraction(files: [{path: "fsdf", name: "sdsf", uploadType: "dfgds"}], data:"dgs")
-#   {
-#     jobId
-#   }
-# }
