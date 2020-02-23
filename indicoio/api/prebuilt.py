@@ -99,11 +99,7 @@ class IndicoApi(Indico):
         # Get paths, assume anything not a path is b64 encoded
         # Not sure if this method should only handle paths or handle both paths and encoded
         # files, but do something differently for encoded files
-
-        data_paths = [d for d in data if Path(d).exists()]
-        data_b64s = [d for d in data if d not in data_paths]
-
-        uploaded_files = self.storage.upload_files(data_paths)
+        uploaded_files = self.storage.upload_files(data)
 
         file_inputs = _convert_files_to_str(uploaded_files)
 
