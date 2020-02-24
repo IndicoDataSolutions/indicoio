@@ -13,8 +13,8 @@ def _convert_options_to_str(options):
     return ",".join(f"{key}: {json.dumps(option)}" for key, option in options.items())
 
 
-def _convert_files_to_str(uploaded_files: List[dict]):
-    file_inputs = [
+def _parse_uploaded_files(uploaded_files: List[dict]):
+    return [
         {
             "filename": f["name"],
             "filemeta": json.dumps(
@@ -23,7 +23,6 @@ def _convert_files_to_str(uploaded_files: List[dict]):
         }
         for f in uploaded_files
     ]
-    return file_inputs
 
 
 class IndicoApi(Indico):
@@ -91,7 +90,7 @@ class IndicoApi(Indico):
 
         uploaded_files = self.storage.upload_files(data)
 
-        file_inputs = _convert_files_to_str(uploaded_files)
+        file_inputs = _parse_uploaded_files(uploaded_files)
 
         import ipdb
 
@@ -104,7 +103,7 @@ class IndicoApi(Indico):
                 }}
             }}
             """,
-            variables=json.dumps({"files": file_inputs})
+            variables=json.dumps({"files": file_inputs}),
         )
 
         job_id = response["data"]["documentExtraction"]["jobId"]
