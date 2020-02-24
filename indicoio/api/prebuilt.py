@@ -23,11 +23,7 @@ def _convert_files_to_str(uploaded_files: List[dict]):
         }
         for f in uploaded_files
     ]
-    return (
-        json.dumps(file_inputs)
-        .replace('"filename": ', "filename: ")
-        .replace('"filemeta": ', "filemeta: ")
-    )
+    return json.dumps({"files": file_inputs})
 
 
 class IndicoApi(Indico):
@@ -79,10 +75,7 @@ class IndicoApi(Indico):
             return job.result()
 
     def document_extraction(
-        self,
-        data: List,
-        job_results: bool = False,
-        **document_extraction_options,
+        self, data: List, job_results: bool = False, **document_extraction_options,
     ):
         """
         Extracts and returns the contents of a Word Document
@@ -100,14 +93,18 @@ class IndicoApi(Indico):
 
         file_inputs = _convert_files_to_str(uploaded_files)
 
+        import ipdb
+
+        ipdb.set_trace()
         response = self.graphql.query(
             f"""
-            mutation {{
-                documentExtraction(data: "xyz", files: {file_inputs}, {option_string}) {{
+            mutation($files: [FileInput]) {{
+                documentExtraction(files: $files, {option_string}) {{
                     jobId
                 }}
             }}
-            """
+            """,
+            variables=file_inputs,
         )
 
         job_id = response["data"]["documentExtraction"]["jobId"]
