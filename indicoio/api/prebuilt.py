@@ -92,9 +92,6 @@ class IndicoApi(Indico):
 
         file_inputs = _parse_uploaded_files(uploaded_files)
 
-        import ipdb
-
-        ipdb.set_trace()
         response = self.graphql.query(
             f"""
             mutation($files: [FileInput]) {{
