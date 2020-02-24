@@ -23,7 +23,7 @@ def _convert_files_to_str(uploaded_files: List[dict]):
         }
         for f in uploaded_files
     ]
-    return json.dumps({"files": file_inputs})
+    return file_inputs
 
 
 class IndicoApi(Indico):
@@ -104,7 +104,7 @@ class IndicoApi(Indico):
                 }}
             }}
             """,
-            variables=file_inputs,
+            variables=json.dumps({"files": file_inputs})
         )
 
         job_id = response["data"]["documentExtraction"]["jobId"]
