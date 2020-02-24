@@ -6,7 +6,7 @@ from indicoio.preprocess.pdf import pdf_preprocess
 from indicoio.errors import IndicoInputError
 from indicoio.client.storage import StorageClient
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 
 def _convert_options_to_str(options):
@@ -80,14 +80,14 @@ class IndicoApi(Indico):
 
     def document_extraction(
         self,
-        data: Union(List[str], List(bytes)) = [],
+        data: List,
         job_results: bool = False,
         **document_extraction_options,
     ):
         """
         Extracts and returns the contents of a Word Document
 
-        :param data: List of inputs for extraction.
+        :param data: List of inputs for extraction. Can be list of file paths or list of byte arrays.
         :param job_results: True to return the id of the prediction job rather than the prediction results directly.
         :document_extraction_options: Options to pass to Document extraction
         """
