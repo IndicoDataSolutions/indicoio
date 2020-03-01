@@ -74,7 +74,7 @@ class IndicoApi(Indico):
             return job.result()
 
     def document_extraction(
-        self, data: List, job_results: bool = False, **document_extraction_options,
+        self, data: List, job_results: bool = False, **document_extraction_options
     ):
         """
         Extracts and returns the contents of a Word Document
@@ -88,7 +88,7 @@ class IndicoApi(Indico):
         if not isinstance(data, list):
             data = [data]
 
-        uploaded_files = self.storage.upload_files(data)
+        uploaded_files = self.storage.upload(data)
 
         file_inputs = _parse_uploaded_files(uploaded_files)
 

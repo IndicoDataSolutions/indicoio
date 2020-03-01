@@ -5,11 +5,12 @@ import uuid
 
 
 class StorageClient(RequestProxy):
-    def upload_files(self, data: List[str]):
+    def upload(self, data: List[str]):
         files = {}
         for datum in data:
-            if Path(datum).exists():
-                files[datum] = open(datum, "rb")
+            path = Path(datum)
+            if path.exists():
+                files[datum.stem] = path.open("rb")
             else:
                 files[str(uuid.uuid4())] = datum
-        return self.post("/api/storage/files/upload?upload_type=user", files=files)
+        return self.post("/api/storage/files/store", files=files)
