@@ -3,7 +3,7 @@ Main Indico IPA Client
 """
 import json
 import time
-from typing import Union, List
+from typing import Union, List, Dict, Any
 from pathlib import Path
 
 from .base import ObjectProxy
@@ -15,6 +15,7 @@ from indicoio.graphql.queries import (
     CREATE_DATASET_MUTATION,
     FINISH_DATASET_PIPELINE,
     DATASET_STATUS,
+    CREATE_MODEL_GROUP,
 )
 
 
@@ -38,6 +39,27 @@ class Indico(ObjectProxy):
             self.build_object(ModelGroup, **mg)
             for mg in model_groups_response["data"]["modelGroups"]["modelGroups"]
         ]
+
+    def create_model_group(
+        self,
+        name: str,
+        dataset_id: int,
+        source_column_id: int,
+        labelset_column_id: int,
+        label_resolution: str,
+        processors: List[Dict[str, Any]] = None,
+    ):
+        return self.graphql.query(
+            query=CREATE_MODEL_GROUP,
+            variables={
+                "datasetId": dataset_id,
+                "interlabelerResolution": label_resolution,
+                "labelsetColumnId": labelset_column_id,
+                "name": name,
+                "sourceColumnId": source_column_id,
+                "processors": processors or [],
+            },
+        )
 
     def create_dataset(self, name: str, data: List[Union[str, Path]], ocr: bool = True):
         files = self.storage.upload(data)
