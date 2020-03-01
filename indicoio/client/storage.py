@@ -10,7 +10,7 @@ class StorageClient(RequestProxy):
         for datum in data:
             path = Path(datum)
             if path.exists():
-                files[datum.stem] = path.open("rb")
+                files[path.stem] = path.open("rb")
             else:
                 files[str(uuid.uuid4())] = datum
         return self.post("/api/storage/files/store", files=files)
