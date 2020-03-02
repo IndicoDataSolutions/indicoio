@@ -18,7 +18,7 @@ def _parse_uploaded_files(uploaded_files: List[dict]):
         {
             "filename": f["name"],
             "filemeta": json.dumps(
-                {"path": f["path"], "name": f["name"], "uploadType": f["type"]}
+                {"path": f["path"], "name": f["name"], "uploadType": f["upload_type"]}
             ),
         }
         for f in uploaded_files
@@ -87,6 +87,8 @@ class IndicoApi(Indico):
 
         if not isinstance(data, list):
             data = [data]
+
+        import ipdb; ipdb.set_trace()
 
         uploaded_files = self.storage.upload(data)
 
