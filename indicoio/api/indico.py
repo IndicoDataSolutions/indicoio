@@ -105,17 +105,17 @@ class Indico(ObjectProxy):
         data: List of string or read file-like objects
         """
         jobs = []
-        for item in data:
-            storage_obj_dict = self.storage.upload(item)
+        storage_obj_dicts = self.storage.upload(data)
+        for storage_obj in storage_obj_dicts:
             response = self.graphql.query(
-                """mutation workflowSubmissionMutation($workflowId: Int, $files: JSONString) {
-                    workflowSubmissionMutation(workflowId: $workflowId, files: $files) {
-                        job_id
+                """mutation workflowSubmissionMutation($workflowId: Int!, $files: [FileInput]!) {
+                    workflowSubmission(workflowId: $workflowId, files: $files) {
+                        jobId
                     }
                 }""",
-                variables={"workflowId": workflow_id, "files": storage_obj_dict},
+                variables={"workflowId": workflow_id, "files": [storage_obj]},
             )
-            job_id = response["data"]["workflowSubmissionMutation"]["jobId"]
+            job_id = response["data"]["workflowSubmission"]["jobId"]
             job = self.build_object(JobResult, id=job_id)
             jobs.append(job)
         return jobs

@@ -7,6 +7,9 @@ import simplejson as json
 
 class StorageClient(RequestProxy):
     def upload(self, data: List[str]):
+        """
+        Calls user upload endpoint and returns the FileInput formatted representations
+        """
         files = {}
         for datum in data:
             path = Path(datum)
@@ -14,7 +17,7 @@ class StorageClient(RequestProxy):
                 files[path.stem] = path.open("rb")
             else:
                 files[str(uuid.uuid4())] = datum
-            
+
         uploaded_files = self.post("/api/storage/files/store", files=files)
 
         return _parse_uploaded_files(uploaded_files)
