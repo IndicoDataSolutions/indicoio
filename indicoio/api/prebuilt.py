@@ -13,18 +13,6 @@ def _convert_options_to_str(options):
     return ",".join(f"{key}: {json.dumps(option)}" for key, option in options.items())
 
 
-def _parse_uploaded_files(uploaded_files: List[dict]):
-    return [
-        {
-            "filename": f["name"],
-            "filemeta": json.dumps(
-                {"path": f["path"], "name": f["name"], "uploadType": f["upload_type"]}
-            ),
-        }
-        for f in uploaded_files
-    ]
-
-
 class IndicoApi(Indico):
     """
     IndicoApi
@@ -88,9 +76,7 @@ class IndicoApi(Indico):
         if not isinstance(data, list):
             data = [data]
 
-        uploaded_files = self.storage.upload(data)
-
-        file_inputs = _parse_uploaded_files(uploaded_files)
+        file_inputs = self.storage.upload(data)
 
         response = self.graphql.query(
             f"""

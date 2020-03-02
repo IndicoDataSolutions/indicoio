@@ -2,6 +2,7 @@ from indicoio.client.client import RequestProxy
 from typing import List
 from pathlib import Path
 import uuid
+import simplejson as json
 
 
 class StorageClient(RequestProxy):
@@ -13,4 +14,7 @@ class StorageClient(RequestProxy):
                 files[path.stem] = path.open("rb")
             else:
                 files[str(uuid.uuid4())] = datum
-        return self.post("/api/storage/files/store", files=files)
+            
+        uploaded_files = self.post("/api/storage/files/store", files=files)
+
+        return _parse_uploaded_files(uploaded_files)
