@@ -18,3 +18,15 @@ class StorageClient(RequestProxy):
         uploaded_files = self.post("/api/storage/files/store", files=files)
 
         return _parse_uploaded_files(uploaded_files)
+
+
+def _parse_uploaded_files(uploaded_files: List[dict]):
+    return [
+        {
+            "filename": f["name"],
+            "filemeta": json.dumps(
+                {"path": f["path"], "name": f["name"], "uploadType": f["upload_type"]}
+            ),
+        }
+        for f in uploaded_files
+    ]
