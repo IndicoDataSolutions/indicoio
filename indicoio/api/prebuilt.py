@@ -88,8 +88,6 @@ class IndicoApi(Indico):
         if not isinstance(data, list):
             data = [data]
 
-        import ipdb; ipdb.set_trace()
-
         uploaded_files = self.storage.upload(data)
 
         file_inputs = _parse_uploaded_files(uploaded_files)
