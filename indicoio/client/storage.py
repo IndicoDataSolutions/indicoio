@@ -23,7 +23,7 @@ class StorageClient(RequestProxy):
         return _parse_uploaded_files(uploaded_files)
 
     def download(self, url: str):
-        # WIP: Need
+        # WIP: Need to handle downloading files correctly
         relative_url = "/".join(url.split("/")[5:])
         full_url = f"{self.base_url}/api/storage/files/" + relative_url
         response = self.request_session.get(full_url)
