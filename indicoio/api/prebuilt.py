@@ -97,4 +97,5 @@ class IndicoApi(Indico):
             job.wait()
             url = job.result()
             data = self.storage.download(url)
+            # TODO: handle downloading
             return job.result()
