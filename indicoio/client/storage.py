@@ -7,6 +7,9 @@ import simplejson as json
 
 class StorageClient(RequestProxy):
     def upload(self, data: List[str]):
+        """
+        Calls user upload endpoint and returns the FileInput formatted representations
+        """
         files = {}
         for datum in data:
             path = Path(datum)
