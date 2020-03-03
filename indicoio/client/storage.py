@@ -14,10 +14,17 @@ class StorageClient(RequestProxy):
                 files[path.stem] = path.open("rb")
             else:
                 files[str(uuid.uuid4())] = datum
-            
+
         uploaded_files = self.post("/api/storage/files/store", files=files)
 
         return _parse_uploaded_files(uploaded_files)
+
+    def download(self, url: str):
+        # WIP: Need
+        relative_url = "/".join(url.split("/")[5:])
+        full_url = f"{self.base_url}/api/storage/files/" + relative_url
+        response = self.request_session.get(full_url)
+        return response
 
 
 def _parse_uploaded_files(uploaded_files: List[dict]):
