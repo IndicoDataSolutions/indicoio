@@ -82,22 +82,21 @@ class IndicoApi(Indico):
             f"""
             mutation($files: [FileInput]) {{
                 documentExtraction(files: $files, {option_string}) {{
-                    jobId
+                    jobIds
                 }}
             }}
             """,
             variables=json.dumps({"files": file_inputs}),
         )
 
-        import ipdb; ipdb.set_trace()
-        # WIP: updating fog to return lists with field called jobIds
-        job_id = response["data"]["documentExtraction"]["jobId"][0]
-        job = self.build_object(JobResult, id=job_id)
+        job_ids = response["data"]["documentExtraction"]["jobIds"]
+        jobs = [self.build_object(JobResult, id=job_id) for job_id in job_ids]
+
         if job_results:
-            return job
+            return jobs
         else:
-            job.wait()
-            url = job.result()
-            data = self.storage.download(url)
-            # TODO: handle downloading
-            return job.result()
+            for job in jobs:
+                job.wait()
+                url = job.result()
+                data = self.storage.download(url)
+            return data
