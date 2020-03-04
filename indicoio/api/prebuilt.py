@@ -89,7 +89,9 @@ class IndicoApi(Indico):
             variables=json.dumps({"files": file_inputs}),
         )
 
-        job_id = response["data"]["documentExtraction"]["jobId"]
+        import ipdb; ipdb.set_trace()
+        # WIP: updating fog to return lists with field called jobIds
+        job_id = response["data"]["documentExtraction"]["jobId"][0]
         job = self.build_object(JobResult, id=job_id)
         if job_results:
             return job
