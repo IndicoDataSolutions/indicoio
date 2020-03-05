@@ -3,6 +3,8 @@ from typing import List
 from pathlib import Path
 import uuid
 import simplejson as json
+import io
+import gzip
 
 
 class StorageClient(RequestProxy):
@@ -23,11 +25,17 @@ class StorageClient(RequestProxy):
         return _parse_uploaded_files(uploaded_files)
 
     def download(self, url: str):
-        relative_url = "/".join(url.split("/")[5:])
+        relative_url = "/".join(url.split("/")[3:])
         full_url = f"{self.base_url}/api/storage/" + relative_url
-        print("url", url, "relative_url", relative_url, "full_url", full_url)
-        response = self.request_session.get(full_url)
-        return response.text
+        response = self.request_session.get(full_url, stream=True)
+        response.raw.decode_content = True
+        value = io.BytesIO(response.raw.data).getvalue()
+        if url.split(".")[-1] == "json":
+            return json.loads(value)
+        elif url.split(".")[-1] == "gz":
+            return json.loads(gzip.decompress(value))
+        else:
+            return value
 
 
 def _parse_uploaded_files(uploaded_files: List[dict]):
