@@ -91,12 +91,14 @@ class IndicoApi(Indico):
 
         job_ids = response["data"]["documentExtraction"]["jobIds"]
         jobs = [self.build_object(JobResult, id=job_id) for job_id in job_ids]
-
+        
         if job_results:
             return jobs
         else:
+            extracted = []
             for job in jobs:
                 job.wait()
                 url = job.result()
-                data = self.storage.download(url)
-            return data
+                downloaded = self.storage.download(url)
+                extracted.append(downloaded)
+            return extracted
