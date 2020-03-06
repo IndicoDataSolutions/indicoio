@@ -24,10 +24,10 @@ class StorageClient(RequestProxy):
         return _parse_uploaded_files(uploaded_files)
 
     def download(self, url: str):
-        headers = {"Accept-Encoding": "gzip, deflate"}
-        relative_url = "/".join(url.split("/")[3:])
-        full_url = f"{self.base_url}/api/storage/" + relative_url
-        response = self.request_session.get(full_url, stream=True, headers=headers)
+        storage_url = _resolve_indico_protocol(self.base_url, url)
+        response = self.request_session.get(
+            storage_url, stream=True, headers={"Accept-Encoding": "gzip, deflate"}
+        )
         response.raw.decode_content = True
         value = io.BytesIO(response.raw.data).getvalue()
         if url.split(".")[-1] == "json":
@@ -48,3 +48,9 @@ def _parse_uploaded_files(uploaded_files: List[dict]):
         }
         for f in uploaded_files
     ]
+
+
+def _resolve_indico_protocol(base_url, url):
+    relative_url = "/".join(url.split("/")[3:])
+    full_url = f"{base_url}/api/storage/" + relative_url
+    return full_url
