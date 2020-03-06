@@ -10,7 +10,7 @@ def indicoapi(request):
 
 def test_document_extraction_file(indicoapi):
     path = Path(__file__).parent / "data" / "mock.pdf"
-    results = indicoapi.document_extraction([path])
+    results = indicoapi.document_extraction(data=[path])
     import ipdb; ipdb.set_trace()
     assert isinstance(results, list)
     assert isinstance(results[0], dict)

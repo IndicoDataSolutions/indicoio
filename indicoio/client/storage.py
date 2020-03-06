@@ -20,7 +20,8 @@ class StorageClient(RequestProxy):
             else:
                 files[str(uuid.uuid4())] = datum
 
-        uploaded_files = self.post("/api/storage/files/store", files=files)
+        import ipdb; ipdb.set_trace()
+        uploaded_files = self.post("/storage/files/store", files=files)
 
         return _parse_uploaded_files(uploaded_files)
 
