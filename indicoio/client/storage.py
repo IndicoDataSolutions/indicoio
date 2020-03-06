@@ -20,16 +20,14 @@ class StorageClient(RequestProxy):
             else:
                 files[str(uuid.uuid4())] = datum
 
-        import ipdb; ipdb.set_trace()
         uploaded_files = self.post("/storage/files/store", files=files)
-
         return _parse_uploaded_files(uploaded_files)
 
     def download(self, url: str):
-        print(url)
+        headers = {"Accept-Encoding": "gzip, deflate"}
         relative_url = "/".join(url.split("/")[3:])
         full_url = f"{self.base_url}/api/storage/" + relative_url
-        response = self.request_session.get(full_url, stream=True)
+        response = self.request_session.get(full_url, stream=True, headers=headers)
         response.raw.decode_content = True
         value = io.BytesIO(response.raw.data).getvalue()
         if url.split(".")[-1] == "json":

@@ -71,14 +71,13 @@ class IndicoApi(Indico):
         :param job_results: True to return the id of the prediction job rather than the prediction results directly.
         :document_extraction_options: Options to pass to Document extraction
         """
-
         if not isinstance(data, list):
             data = [data]
 
-        file_inputs = self.storage.upload(data)
-
         if not json_config:
             json_config = {"preset_config": "simple"}
+
+        file_inputs = self.storage.upload(data)
 
         variables = {"files": file_inputs, "jsonConfig": json.dumps(json_config)}
 
