@@ -62,7 +62,7 @@ class IndicoApi(Indico):
             return job.result()
 
     def document_extraction(
-        self, data: List, job_results: bool = False, **document_extraction_options
+        self, data: List, job_results: bool = False, json_config=None
     ):
         """
         Extracts and returns the contents of a Word Document
@@ -71,27 +71,31 @@ class IndicoApi(Indico):
         :param job_results: True to return the id of the prediction job rather than the prediction results directly.
         :document_extraction_options: Options to pass to Document extraction
         """
-        option_string = _convert_options_to_str(document_extraction_options)
 
         if not isinstance(data, list):
             data = [data]
 
         file_inputs = self.storage.upload(data)
 
+        if not json_config:
+            json_config = {"preset_config": "simple"}
+
+        variables = {"files": file_inputs, "jsonConfig": json.dumps(json_config)}
+
         response = self.graphql.query(
             f"""
-            mutation($files: [FileInput]) {{
-                documentExtraction(files: $files, {option_string}) {{
+            mutation($files: [FileInput], $jsonConfig: JSONString) {{
+                documentExtraction(files: $files, jsonConfig: $jsonConfig ) {{
                     jobIds
                 }}
             }}
             """,
-            variables=json.dumps({"files": file_inputs}),
+            variables=json.dumps(variables),
         )
 
         job_ids = response["data"]["documentExtraction"]["jobIds"]
         jobs = [self.build_object(JobResult, id=job_id) for job_id in job_ids]
-        
+
         if job_results:
             return jobs
         else:
