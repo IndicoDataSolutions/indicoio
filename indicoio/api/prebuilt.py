@@ -101,7 +101,7 @@ class IndicoApi(Indico):
             extracted = []
             for job in jobs:
                 job.wait()
-                url = job.result()
+                url = job.result()["url"]
                 downloaded = self.storage.download(url)
                 extracted.append(downloaded)
             return extracted

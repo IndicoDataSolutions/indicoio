@@ -52,5 +52,5 @@ def _parse_uploaded_files(uploaded_files: List[dict]):
 
 def _resolve_indico_protocol(base_url, url):
     relative_url = "/".join(url.split("/")[3:])
-    full_url = f"{base_url}/api/storage/" + relative_url
+    full_url = f"{base_url}/api/" + relative_url
     return full_url
