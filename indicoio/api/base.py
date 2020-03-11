@@ -9,6 +9,7 @@ class ObjectProxy(RequestConfigMixin):
         super().__init__(config_options)
         self.graphql = GraphClient(config_options=self.config_options)
         self.storage = StorageClient(config_options=self.config_options)
+        self.request = RequestProxy(config_options=self.config_options)
         self.object_attrs = object_attrs or {}
 
     def get(self, *args, **kwargs):

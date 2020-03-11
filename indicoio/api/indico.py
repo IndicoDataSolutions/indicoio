@@ -37,7 +37,9 @@ class Indico(ObjectProxy):
 
         return [
             self.build_object(ModelGroup, **mg)
-            for mg in model_groups_response["data"]["modelGroups"]["modelGroups"]
+            for mg in model_groups_response["data"]["modelGroups"][
+                "modelGroups"
+            ]
         ]
 
     def create_model_group(
@@ -61,10 +63,13 @@ class Indico(ObjectProxy):
             },
         )
 
-    def create_dataset(self, name: str, data: List[Union[str, Path]], ocr: bool = True):
+    def create_dataset(
+        self, name: str, data: List[Union[str, Path]], ocr: bool = True
+    ):
         files = self.storage.upload(data)
         response = self.graphql.query(
-            query=CREATE_DATASET_MUTATION, variables={"metadata": json.dumps(files)}
+            query=CREATE_DATASET_MUTATION,
+            variables={"metadata": json.dumps(files)},
         )
         dataset_id = response["data"]["newDataset"]["id"]
         files_status = ["DOWNLOADING"]
@@ -83,7 +88,9 @@ class Indico(ObjectProxy):
 
         if any(status != "DOWNLOADED" for status in files_status):
             files = status_response["data"]["dataset"]["files"]
-            file = next(file for file in files if file["status"] != "DOWNLOADED")
+            file = next(
+                file for file in files if file["status"] != "DOWNLOADED"
+            )
             raise IndicoRequestError(f"{file['name']} failed to be processed.")
 
         result = self.graphql.query(
@@ -116,6 +123,7 @@ class Indico(ObjectProxy):
                 variables={"workflowId": workflow_id, "files": [storage_obj]},
             )
             job_id = response["data"]["workflowSubmission"]["jobId"]
+            print(job_id)
             job = self.build_object(JobResult, id=job_id)
             jobs.append(job)
         return jobs
