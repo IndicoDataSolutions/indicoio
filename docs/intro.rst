@@ -58,6 +58,26 @@ config to IndicoClient as follows::
 
     client = IndicoClient(config=my_config)
 
+If you want to learn more about GraphQL, the `How to GraphQL`_ tutorial is a great place to start.
+
+
+Indico GraphQL Schema
+======================
+
+The Indico Platform ships with a built-in sandbox environment that both documents and allows you to
+interactively explore the Platform's GraphQL schema. You can find the sandbox at ``/graph/api/graphql``
+on your Indico Platform installation. If your Platform's host is ``indico.my_company.com`` then the full
+sandbox URL would be ``https://indico.my_company.com/graph/api/graphql``
+
+
+Pre-Built GraphQL queries
+=========================
+
+GraphQL is extremely powerful, flexible and efficient but can be a bit verbose. To make things easier
+for day-to-day use of the Platform and Client Library, the developers at Indico created a collection of
+Python Classes to generate the most often used queries for you. You can find the collection documented
+in the Reference section of the Client Libreary Docs.
 
 
 .. _user dashboard: https://app.indico.io/auth/user
+.. _How to GraphQL: https://www.howtographql.com/
