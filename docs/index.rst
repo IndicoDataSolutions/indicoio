@@ -7,9 +7,10 @@ indicoio Python Client Library
 
     intro
 
+**Examples**
+
 .. toctree::
     :maxdepth: 2
-    :caption: Examples
 
     graphql-ex
     train-predict-ex
