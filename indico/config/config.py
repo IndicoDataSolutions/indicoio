@@ -11,8 +11,8 @@ class IndicoConfig:
     Configuration for the IndicoClient.
 
     Args:
-        host (str, optional): Indico Platform hostname (ie indico.myco.com)
-        api_token_path (str, optional): Path to the Indico API token file indico_api_token.txt
+        host= (str, optional): Indico Platform hostname (ie indico.myco.com)
+        api_token_path= (str, optional): Path to the Indico API token file indico_api_token.txt
 
     Returns:
         IndicoConfig object
